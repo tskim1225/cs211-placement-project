@@ -43,6 +43,7 @@ jobs:
           node -e '
             const fs = require("fs");
             const file = JSON.parse(fs.readFileSync("task-def.json", "utf8"));
+            delete file.taskDefinitionArn;
             delete file.compatibilities;
             delete file.revision;
             delete file.status;
