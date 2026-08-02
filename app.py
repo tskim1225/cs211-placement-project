@@ -33,6 +33,19 @@ FEATURE_COLS = [
 ]
 
 def get_db_connection():
+    # 1. Connect to MySQL server WITHOUT specifying a database name first
+    temp_conn = mysql.connector.connect(
+        host=os.getenv("DB_HOST"),
+        user=os.getenv("DB_USER"),
+        password=os.getenv("DB_PASS")
+    )
+    cursor = temp_conn.cursor()
+    # 2. Automatically create the database if it doesn't exist yet
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{os.getenv('DB_NAME')}`")
+    cursor.close()
+    temp_conn.close()
+
+    # 3. Now connect normally to the newly created database
     return mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
