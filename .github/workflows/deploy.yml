@@ -39,6 +39,21 @@ jobs:
       - name: Download task definition
         run: |
           aws ecs describe-task-definition --task-definition fastapi-task --query taskDefinition > task-def.json
+          # Remove keys that cause registration errors with older deployment actions
+          node -e '
+            const fs = require("fs");
+            const file = JSON.parse(fs.readFileSync("task-def.json", "utf8"));
+            delete file.compatibilities;
+            delete file.revision;
+            delete file.status;
+            delete file.requiresAttributes;
+            delete file.registeredAt;
+            delete file.registeredBy;
+            if (file.containerDefinitions) {
+              file.containerDefinitions.forEach(c => delete c.enableFaultInjection);
+            }
+            fs.writeFileSync("task-def.json", JSON.stringify(file, null, 2));
+          '
 
       - name: Fill in the new image ID in the Amazon ECS task definition
         id: render-task-def
