@@ -1,0 +1,57 @@
+name: Deploy to Amazon ECS
+
+on:
+  push:
+    branches:
+      - main  # Triggers automatically whenever you push to the main branch
+
+jobs:
+  deploy:
+    name: Deploy
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: us-west-2  # Change if your region is different
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-login-to-ecr@v1
+
+      - name: Build, tag, and push image to Amazon ECR
+        id: build-image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: your-ecr-repo-name  # REPLACE WITH YOUR ECR REPO NAME
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+          echo "image=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $github.output
+
+      - name: Download task definition
+        run: |
+          aws ecs describe-task-definition --task-definition fastapi-task --query taskDefinition > task-def.json
+
+      - name: Fill in the new image ID in the Amazon ECS task definition
+        id: render-task-def
+        uses: aws-actions/amazon-ecs-render-task-definition@v1
+        with:
+          task-definition: task-def.json
+          container-name: fastapi-container
+          image: ${{ steps.build-image.outputs.image }}
+
+      - name: Deploy Amazon ECS task definition
+        uses: aws-actions/amazon-ecs-deploy-task-definition@v1
+        with:
+          task-definition: ${{ steps.render-task-def.outputs.task-definition }}
+          cluster: your-ecs-cluster-name  # REPLACE WITH YOUR ECS CLUSTER NAME
+          service: your-ecs-service-name  # REPLACE WITH YOUR ECS SERVICE NAME
+          wait-for-service-stability: true
