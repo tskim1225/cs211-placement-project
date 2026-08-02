@@ -29,7 +29,7 @@ jobs:
         id: build-image
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-          ECR_REPOSITORY: your-ecr-repo-name  # REPLACE WITH YOUR ECR REPO NAME
+          ECR_REPOSITORY: fastapi-backend
           IMAGE_TAG: latest
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
@@ -52,6 +52,6 @@ jobs:
         uses: aws-actions/amazon-ecs-deploy-task-definition@v1
         with:
           task-definition: ${{ steps.render-task-def.outputs.task-definition }}
-          cluster: your-ecs-cluster-name  # REPLACE WITH YOUR ECS CLUSTER NAME
-          service: your-ecs-service-name  # REPLACE WITH YOUR ECS SERVICE NAME
+          cluster: fastapi-cluster
+          service: fastapi-service
           wait-for-service-stability: true
