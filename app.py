@@ -19,7 +19,7 @@ templates = Jinja2Templates(directory=os.path.join(base_dir, "templates"))
 CSV_PATH = '/tmp/student_training_data.csv'
 
 PROFESSOR_KEYS = {
-    "Taesik Kim": "pass123",
+    "Taesik Kim": "pass1234",
     "Tanuja Joshi": "pass134",
     "Varik Hoang": "pass145",
     "Joseph Hueffed": "pass156"
