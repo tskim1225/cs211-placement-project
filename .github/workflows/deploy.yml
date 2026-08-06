@@ -3,7 +3,7 @@ name: Deploy to Amazon ECS
 on:
   push:
     branches:
-      - main  # Triggers automatically whenever you push to the main branch
+      - main
 
 jobs:
   deploy:
@@ -19,7 +19,7 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-west-2  # Change if your region is different
+          aws-region: us-west-2
 
       - name: Login to Amazon ECR
         id: login-ecr
@@ -65,8 +65,5 @@ jobs:
 
       - name: Deploy to Amazon ECS using AWS CLI
         run: |
-          # Register the updated task definition cleanly using standard AWS CLI
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.render-task-def.outputs.task-definition }} --query 'taskDefinition.taskDefinitionArn' --output text)
-          
-          # Update the ECS service to use this new task definition version
           aws ecs update-service --cluster fastapi-cluster --service fastapi-service --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
