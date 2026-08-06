@@ -41,7 +41,7 @@ def get_db_connection():
     )
     cursor = temp_conn.cursor()
     # 2. Automatically create the database if it doesn't exist yet
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{os.getenv('DB_NAME')}`")
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{os.getenv('bc-self-assessment-db')}`")
     cursor.close()
     temp_conn.close()
 
