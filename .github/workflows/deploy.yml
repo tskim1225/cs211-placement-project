@@ -66,4 +66,4 @@ jobs:
       - name: Deploy to Amazon ECS using AWS CLI
         run: |
           NEW_TASK_DEF_ARN=$(aws ecs register-task-definition --cli-input-json file://${{ steps.render-task-def.outputs.task-definition }} --query 'taskDefinition.taskDefinitionArn' --output text)
-          aws ecs update-service --cluster fastapi-cluster --service fastapi-service --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
+          aws ecs update-service --cluster fastapi-cluster --service cs211-web-service --task-definition $NEW_TASK_DEF_ARN --force-new-deployment
