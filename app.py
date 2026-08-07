@@ -1,6 +1,5 @@
 import os
 import pandas as pd
-import requests
 import mysql.connector
 from fastapi import FastAPI, Request, Response, Form
 from fastapi.responses import HTMLResponse, RedirectResponse
@@ -19,10 +18,12 @@ templates = Jinja2Templates(directory=os.path.join(base_dir, "templates"))
 CSV_PATH = '/tmp/student_training_data.csv'
 
 PROFESSOR_KEYS = {
-    "Taesik Kim": "pass1234",
-    "Tanuja Joshi": "pass134",
-    "Varik Hoang": "pass145",
-    "Joseph Hueffed": "pass156"
+    "Taesik Kim": "tk211!",
+    "Tanuja Joshi": "tj211",
+    "Varik Hoang": "vh1!",
+    "Joseph Hueffed": "jh2@",
+    "Garth Scheck": "gs211",
+    "Xiao Li": "xl211"
 }
 
 FEATURE_COLS = [
@@ -33,42 +34,12 @@ FEATURE_COLS = [
 ]
 
 def get_db_connection():
-    # 1. Connect to MySQL server WITHOUT specifying a database name first
-    temp_conn = mysql.connector.connect(
-        host=os.getenv("DB_HOST"),
-        user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASS")
-    )
-    cursor = temp_conn.cursor()
-    # 2. Automatically create the database if it doesn't exist yet
-    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{os.getenv('bc-self-assessment-db')}`")
-    cursor.close()
-    temp_conn.close()
-
-    # 3. Now connect normally to the newly created database
     return mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
         password=os.getenv("DB_PASS"),
         database=os.getenv("DB_NAME")
     )
-
-def send_to_google_sheets(sid, name, score, status, professor, session, quarter, year):
-    url = "https://docs.google.com/forms/d/e/1FAIpQLSeJjxjL3WoG6NODAhdFS_RVjdHN3KGsIdag9Y71fxsDytyZAQ/formResponse"
-    payload = {
-        "entry.2042537524": sid, 
-        "entry.1764834092": name,
-        "entry.1723464832": str(score), 
-        "entry.1434025782": status,
-        "entry.1068536601": professor,  
-        "entry.2117289351": session,    
-        "entry.2104050879": quarter,    
-        "entry.360230819": year        
-    }
-    try:
-        requests.post(url, data=payload, timeout=5)
-    except Exception as e:
-        print(f"Sheets Error: {e}")
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
@@ -131,8 +102,6 @@ async def handle_submit(
             "hashmap": cat_scores.get("Java Collections Framework -HashMap", {}).get('correct', 0)
         }
 
-        send_to_google_sheets(sid, name, points, status, professor, session, quarter, year)
-
         try:
             conn = get_db_connection()
             cursor = conn.cursor()
@@ -164,7 +133,7 @@ async def handle_submit(
         return templates.TemplateResponse("result.html", {
             "request": request,
             "points": points,
-            "recommendations": recommendations, # This now contains the JSON tips!
+            "recommendations": recommendations, 
             "cat_scores": cat_scores,
             "status": status
         })
@@ -180,9 +149,7 @@ async def login_page(request: Request):
 # 2. This HANDLES the login button click (POST)
 @app.post("/login")
 async def login_submit(request: Request, professor: str = Form(...), key: str = Form(...)):
-    # Check the password
     if professor in PROFESSOR_KEYS and PROFESSOR_KEYS[professor] == key:
-        # HIDE the data in a session cookie instead of the URL
         request.session["user"] = professor 
         return RedirectResponse(url="/dashboard", status_code=303)
     
@@ -194,19 +161,15 @@ async def dashboard(request: Request):
     if not prof_f:
         return RedirectResponse(url="/login")
 
-    # Get filters from URL
     sess_f = request.query_params.get("sess_f")
     qtr_f = request.query_params.get("qtr_f")
     yr_f = request.query_params.get("yr_f")
 
     try:
         conn = get_db_connection()
-        # Fetch everything from DB
         df = pd.read_sql("SELECT * FROM assessment_results", conn)
         conn.close()
         
-        # 1. Standardize column names for the logic/chart
-        # Note: We keep 'sid', 'status', 'quarter', 'year' available in the DF
         df = df.rename(columns={
             'name': 'Student_Name', 
             'score': 'Total_Score', 
@@ -221,7 +184,6 @@ async def dashboard(request: Request):
         for col in ['Professor', 'Session', 'Quarter', 'Year']:
             df[col] = df[col].astype(str).str.strip()
 
-        # 2. Filter by the logged-in Professor
         df = df[df['Professor'] == str(prof_f).strip()]
 
         filters = {
@@ -230,12 +192,10 @@ async def dashboard(request: Request):
             "years": sorted(df['Year'].unique().tolist())
         }
 
-        # 3. Apply Dropdown Filters
         if sess_f: df = df[df['Session'] == sess_f.strip()]
         if qtr_f: df = df[df['Quarter'] == qtr_f.strip()]
         if yr_f: df = df[df['Year'] == yr_f.strip()]
 
-        # 4. Chart Logic (Keep as is)
         averages = {
             "Basic: loop/ for-each": round(df['loops'].mean() * 2, 1) if not df.empty else 0,
             "Basic: Method/parameter passing": round(df['methods'].mean() * 2, 1) if not df.empty else 0,
@@ -247,15 +207,13 @@ async def dashboard(request: Request):
             "Java Collections Framework -HashMap": round(df['hashmap'].mean() * 2, 1) if not df.empty else 0
         }
 
-        # 5. FIX: include ALL columns and remove .tail(5)
-        # We sort by ID descending so the newest are at the top, but we keep ALL of them.
         all_students = df.sort_values(by='id', ascending=False).to_dict('records')
         
         return templates.TemplateResponse("admin.html", {
             "request": request, 
             "filters": filters, 
             "averages": averages, 
-            "recent": all_students, # Sending all filtered students
+            "recent": all_students, 
             "selections": {"prof": prof_f, "sess": sess_f, "qtr": qtr_f, "yr": yr_f},
             "total_students": len(df)
         })
