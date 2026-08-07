@@ -34,12 +34,19 @@ FEATURE_COLS = [
 ]
 
 def get_db_connection():
-    return mysql.connector.connect(
+    # 1. Connect without selecting a database first
+    conn = mysql.connector.connect(
         host=os.getenv("DB_HOST"),
         user=os.getenv("DB_USER"),
-        password=os.getenv("DB_PASS"),
-        database=os.getenv("DB_NAME")
+        password=os.getenv("DB_PASS")
     )
+    cursor = conn.cursor()
+    # 2. Create the database if it doesn't exist using the DB_NAME environment variable
+    db_name = os.getenv("DB_NAME", "student_placement_db")
+    cursor.execute(f"CREATE DATABASE IF NOT EXISTS `{db_name}`")
+    cursor.execute(f"USE `{db_name}`")
+    cursor.close()
+    return conn
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
