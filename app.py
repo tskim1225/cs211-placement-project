@@ -9,10 +9,6 @@ from logic import load_questions, calculate_results, get_multi_label_prediction
 
 app = FastAPI()
 
-@app.get("/health")
-async def health_check():
-    return {"status": "healthy"}
-
 # SECURITY: This hides the password from the URL
 app.add_middleware(SessionMiddleware, secret_key="cs211-secret-secure-key-99")
 
@@ -51,6 +47,10 @@ def get_db_connection():
     cursor.execute(f"USE `{db_name}`")
     cursor.close()
     return conn
+
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
 
 @app.get("/", response_class=HTMLResponse)
 async def home(request: Request):
