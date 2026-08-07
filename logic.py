@@ -22,7 +22,7 @@ PASSING_CONFIG = {
         "pass_min": 7,         
         "min_pass_count": 1
     },
-    "Group_7_8":  {
+    "Group_7_8": {
         "categories": ["Java Collections Framework -HashSet", "Java Collections Framework -HashMap"],
         "abs_min": 4,          
         "pass_min": 5,         
