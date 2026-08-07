@@ -9,6 +9,10 @@ from logic import load_questions, calculate_results, get_multi_label_prediction
 
 app = FastAPI()
 
+@app.get("/health")
+async def health_check():
+    return {"status": "healthy"}
+
 # SECURITY: This hides the password from the URL
 app.add_middleware(SessionMiddleware, secret_key="cs211-secret-secure-key-99")
 
