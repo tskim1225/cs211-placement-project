@@ -76,8 +76,10 @@
                         <label class="form-label fw-bold">Session</label>
                         <select id="sesssionSelect" name="session" class="form-select" required>
                             <option value="" selected disabled>Choose...</option>
-                            <option value="OA-LEC (9005)">OA-LEC (9005) MoWe 5:30pm ~ 7:40pm</option>
-                            <option value="OB-LEC (9006)">OB-LEC (9006) Online Asych.</option>
+                            <option value="AA-LEC (17159)">AA-LEC (17159) MoTuWeThFr 10:30~11:20.</option>
+                            <option value="OA-LEC (17161)">OA-LEC (17161) Online Asych.</option>
+                            <option value="OB-LEC (17162)">OB-LEC (17162) Online Asych.</option>
+                            <option value="OC-LEC (24320)">OC-LEC (24320) Online/TuTh 5:30PM-7:40PM</option>
                         </select>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -139,10 +141,10 @@
             const yearSelect = document.getElementById('yearSelect');
 
             const sessionToProfessors = {
-                'AA-LEC (17400)': 'Taesik Kim',
-                'OA-LEC (17401)': 'Tanuja Joshi',
-                'OB-LEC (9006)': 'Varik Hoang',
-                'OA-LEC (9005)': 'Joseph Hueffed'
+                'AA-LEC (17159)': 'Taesik Kim',
+                'OA-LEC (17161)': 'Xiao Li',
+                'OB-LEC (17162)': 'Varik Hoang',
+                'OC-LEC (24320)': 'Joseph Hueffed'
             };
 
             sessionSelect.addEventListener('change', function() {
