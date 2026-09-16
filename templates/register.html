@@ -59,7 +59,7 @@
         </div>
 
         <div class="card shadow-sm mb-5">
-            <h3 class="mb-4"> </h3>
+            <h3 class="mb-4">  </h3>
             <form action="/quiz" method="post">
                 <div class="mb-3">
                     <label class="form-label fw-bold">Student ID (SID)</label>
@@ -71,27 +71,13 @@
                     <input type="text" name="name" class="form-control" placeholder="As it appears on your ID" required minlength="2">
                 </div>
 
-                <div class="mb-3">
-                    <label for="professor" class="form-label fw-bold">Assigned Professor</label>
-                    <select class="form-select bg-light" id="professorSelect" name="professor" required
-                            style="pointer-events: none; background-color: #f8f9fa; cursor: not-allowed;">
-                        <option value="" selected disabled>Your instructor...</option>
-                        <option value="Taesik Kim">Taesik Kim</option>
-                        <option value="Tanuja Joshi">Tanuja Joshi</option>
-                        <option value="Varik Hoang">Varik Hoang</option>
-                        <option value="Joseph Hueffed">Joseph Hueffed</option>
-                    </select>
-                </div>
-
                 <div class="row">
                     <div class="col-md-4 mb-3">
                         <label class="form-label fw-bold">Session</label>
                         <select id="sesssionSelect" name="session" class="form-select" required>
                             <option value="" selected disabled>Choose...</option>
-                            <option value="AA-LEC (17400)">AA-LEC (17400)</option>
-                            <option value="OA-LEC (17401)">OA-LEC (17401)</option>
-                            <option value="OB-LEC (17402)">OB-LEC (17402)</option>
-                            <option value="OD-LEC (17430)">OD-LEC (17430)</option>
+                            <option value="OA-LEC (9005)">OA-LEC (9005) MoWe 5:30pm ~ 7:40pm</option>
+                            <option value="OB-LEC (9006)">OB-LEC (9006) Online Asych.</option>
                         </select>
                     </div>
                     <div class="col-md-4 mb-3">
@@ -112,6 +98,21 @@
                         </select>
                     </div>
                 </div>
+
+                <div class="mb-3">
+                    <label for="professor" class="form-label fw-bold">Professor</label>
+                    <select class="form-select bg-light" id="professorSelect" name="professor" required
+                            style="pointer-events: none; background-color: #f8f9fa; cursor: not-allowed;">
+                        <option value="" selected disabled>Your instructor...</option>
+                        <option value="Taesik Kim">Taesik Kim</option>
+                        <option value="Tanuja Joshi">Tanuja Joshi</option>
+                        <option value="Varik Hoang">Varik Hoang</option>
+                        <option value="Joseph Hueffed">Joseph Hueffed</option>
+                        <option value="Garth Scheck">Garth Scheck</option>
+                        <option value="Xiao Li">Xiao Li</option>
+                    </select>
+                </div>
+
                 <button type="submit" class="btn btn-primary w-100 mt-3 py-3 shadow-sm">Start Assessment</button>
             </form>
         </div>
@@ -140,8 +141,8 @@
             const sessionToProfessors = {
                 'AA-LEC (17400)': 'Taesik Kim',
                 'OA-LEC (17401)': 'Tanuja Joshi',
-                'OB-LEC (17402)': 'Varik Hoang',
-                'OD-LEC (17430)': 'Joseph Hueffed'
+                'OB-LEC (9006)': 'Varik Hoang',
+                'OA-LEC (9005)': 'Joseph Hueffed'
             };
 
             sessionSelect.addEventListener('change', function() {
