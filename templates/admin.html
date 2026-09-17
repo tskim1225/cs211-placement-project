@@ -105,10 +105,16 @@
                 <table class="table table-hover align-middle">
                     <thead class="table-dark">
                         <tr>
-                            <th style="width: 50px;">#</th> <th>SID</th>
-                            <th>Name</th>
-                            <th>Quarter</th>
-                            <th>Year</th>
+                            <th style="width: 50px;" class="text-center">#</th> <th class="text-center">SID</th>
+                            <th class="text-center">Name</th>
+                            <th class="text-center">Loop</th>
+                            <th class="text-center">Method</th>
+                            <th class="text-center">Logic</th>
+                            <th class="text-center">Arrays</th>
+                            <th class="text-center">Classes</th>
+                            <th class="text-center">Inherit</th>
+                            <th class="text-center">HashSet</th>
+                            <th class="text-center">HashMap</th>
                             <th class="text-center">Total Score</th>
                             <th class="text-center">Status</th>
                         </tr>
@@ -118,8 +124,14 @@
                         <tr>
                             <td class="text-muted small">{{ loop.index }}</td> <td class="fw-bold">{{ student.SID }}</td>
                             <td>{{ student.Student_Name }}</td>
-                            <td>{{ student.Quarter }}</td>
-                            <td>{{ student.Year }}</td>
+                            <td style="text-align: right; padding-right: 15px;"> {{ student.loops * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.methods * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.logic * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.arrays * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.classes * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.inheritance * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.hashset * 2 }}</td>
+                            <td style="text-align: right; padding-right: 15px;">{{ student.hashmap * 2 }}</td>
                             <td class="text-center">
                                 <span class="badge bg-light text-dark border">{{ student.Total_Score }}/80</span>
                             </td>
